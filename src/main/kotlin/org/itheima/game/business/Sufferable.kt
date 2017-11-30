@@ -11,6 +11,11 @@ import org.itheima.game.model.View
 interface Sufferable:View {
 
     /**
+     * 生命值
+     */
+    val blood:Int
+
+    /**
      * 通知被攻击者遭受了攻击者的攻击
      */
     fun notifySuffer(attackable: Attackable)

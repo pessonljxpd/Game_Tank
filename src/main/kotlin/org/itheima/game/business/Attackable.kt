@@ -11,6 +11,11 @@ import org.itheima.game.model.View
 interface Attackable : View {
 
     /**
+     * 攻击力
+     */
+    val attackPower:Int
+
+    /**
      * 判断是否碰撞
      */
     fun isCollision(sufferable: Sufferable): Boolean

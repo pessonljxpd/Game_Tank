@@ -3,7 +3,9 @@ package org.itheima.game.model
 import org.itheima.game.Config
 import org.itheima.game.business.Attackable
 import org.itheima.game.business.Blockable
+import org.itheima.game.business.Destroyable
 import org.itheima.game.business.Sufferable
+import org.itheima.kotlin.game.core.Composer
 import org.itheima.kotlin.game.core.Painter
 
 /**
@@ -12,7 +14,10 @@ import org.itheima.kotlin.game.core.Painter
  * @author Shelly
  * @date 2017/11/29
  */
-class Wall(override val x: Int, override val y: Int) : Blockable, Sufferable {
+class Wall(override val x: Int, override val y: Int)
+    : Blockable, Destroyable, Sufferable {
+
+    override var blood: Int = 3
 
     /**
      * 重载View的成员变量并赋值
@@ -27,7 +32,12 @@ class Wall(override val x: Int, override val y: Int) : Blockable, Sufferable {
         Painter.drawImage("img/wall.gif", x, y)
     }
 
+    override fun isDestroyed(): Boolean = blood <= 0
+
     override fun notifySuffer(attackable: Attackable) {
-        println("砖墙接收到挨打了。。。。")
+        blood -= attackable.attackPower
+
+        Composer.play("snd/hit.wav")
+
     }
 }

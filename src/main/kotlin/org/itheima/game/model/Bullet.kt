@@ -18,6 +18,8 @@ import org.itheima.kotlin.game.core.Painter
 class Bullet(override val currentDirection: Direction, create: (width: Int, height: Int) -> Pair<Int, Int>)
     : AutoMovable, Destroyable, Attackable {
 
+    override var attackPower: Int = 1
+
     override val speed: Int = 8
 
     override var x: Int = 0
