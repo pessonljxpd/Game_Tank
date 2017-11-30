@@ -45,6 +45,9 @@ class GameWindow : Window("GameTank V1.0", "img/logo.jpg", Config.gameWidth, Con
                     '水' -> {
                         views.add(Water(columnNum * Config.block, lineNum * Config.block))
                     }
+                    '敌' -> {
+                        views.add(Enemy(columnNum * Config.block, lineNum * Config.block))
+                    }
                 }
 
                 columnNum++
@@ -127,7 +130,7 @@ class GameWindow : Window("GameTank V1.0", "img/logo.jpg", Config.gameWidth, Con
 
                 suffer as Sufferable
 
-                if (attack.isCollision(suffer)){
+                if (attack.isCollision(suffer)) {
                     // 检测到产生碰撞后，通知攻击者、被攻击者
                     attack.notifyAttack(suffer)
                     var sufferView = suffer.notifySuffer(attack)
@@ -139,6 +142,15 @@ class GameWindow : Window("GameTank V1.0", "img/logo.jpg", Config.gameWidth, Con
 
                     return@sufferTag
                 }
+            }
+        }
+
+        // 检测自动射击的View
+        views.filter { it is AutoShot }.forEach {
+            it as AutoShot
+            val autoShot = it.autoShot()
+            autoShot?.let {
+                views.add(autoShot)
             }
         }
 

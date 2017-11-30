@@ -34,7 +34,7 @@ class Wall(override val x: Int, override val y: Int)
 
     override fun isDestroyed(): Boolean = blood <= 0
 
-    override fun notifySuffer(attackable: Attackable):Array<View> {
+    override fun notifySuffer(attackable: Attackable):Array<View>? {
         blood -= attackable.attackPower
 
         Composer.play("snd/hit.wav")
