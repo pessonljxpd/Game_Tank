@@ -27,6 +27,9 @@ interface Movable : View {
      *
      * @return 返回将要碰撞的方向
      */
-    fun willCollision(block: Blockable): Direction?
+    fun willCollision(block: Blockable?): Direction?
+
+
+    fun notifyCollision(direction: Direction?, block: Blockable?)
 
 }

@@ -2,12 +2,14 @@ package org.itheima.game
 
 import javafx.scene.input.KeyCode
 import javafx.scene.input.KeyEvent
+import org.itheima.game.business.AutoMovable
 import org.itheima.game.business.Blockable
 import org.itheima.game.business.Movable
 import org.itheima.game.enums.Direction
 import org.itheima.game.model.*
 import org.itheima.kotlin.game.core.Window
 import java.io.File
+import java.util.concurrent.CopyOnWriteArrayList
 
 /**
  *
@@ -17,13 +19,13 @@ class GameWindow : Window("GameTank V1.0", "img/logo.jpg", Config.gameWidth, Con
     /**
      * 管理视图元素的集合
      */
-    private var views = arrayListOf<View>()
+    private var views = CopyOnWriteArrayList<View>()
 
     private lateinit var tank: Tank
 
     override fun onCreate() {
         // 通过读文件的方式创建地图
-        var file = File(javaClass.getResource("/map/00.map").path)
+        var file = File(javaClass.getResource("/map/1.map").path)
         var lines: List<String> = file.readLines()
 
         var lineNum = 0
@@ -64,17 +66,16 @@ class GameWindow : Window("GameTank V1.0", "img/logo.jpg", Config.gameWidth, Con
     }
 
     override fun onKeyPressed(event: KeyEvent) {
-        var direction: Direction = when (event.code) {
-            KeyCode.W -> Direction.UP
-            KeyCode.S -> Direction.DOWN
-            KeyCode.A -> Direction.LEFT
-            KeyCode.D -> Direction.RIGHT
-            else -> {
-                TODO()
+        when (event.code) {
+            KeyCode.W -> tank.move(Direction.UP)
+            KeyCode.S -> tank.move(Direction.DOWN)
+            KeyCode.A -> tank.move(Direction.LEFT)
+            KeyCode.D -> tank.move(Direction.RIGHT)
+            KeyCode.ENTER -> {
+                val bullet = tank.shot()
+                views.add(bullet)
             }
         }
-
-        tank.move(direction)
     }
 
     override fun onRefresh() {
@@ -82,10 +83,36 @@ class GameWindow : Window("GameTank V1.0", "img/logo.jpg", Config.gameWidth, Con
         // 1. 找到运动的物体
         views.filter { it -> it is Movable }.forEach { move ->
             // 2. 找到阻塞的物体
-            views.filter { it -> it is Blockable }.forEach { block ->
-                // 3. 判断move和block是否碰撞
+            move as Movable
 
+            var badDirection: Direction? = null
+            var badBlock: Blockable? = null
+
+            views.filter { it -> (it is Blockable) and (move != it) }.forEach blockTag@ { block ->
+                // 3. 判断move和block是否碰撞
+                block as Blockable
+
+                val direction = move.willCollision(block)
+
+                direction?.let {
+
+                    badDirection = direction
+                    badBlock = block
+
+                    // 移动的物体发生碰撞就跳出当前的循环
+                    return@blockTag
+                }
             }
+
+            // 4. 通知移动物体将要在哪个方向上碰撞
+            move.notifyCollision(badDirection, badBlock)
+        }
+
+
+        // 找出所有自动移动的物体，触发autoMove动作
+
+        views.filter { it -> it is AutoMovable }.forEach {
+            (it as AutoMovable).autoMove()
         }
 
     }

@@ -32,6 +32,11 @@ class Tank(override var x: Int, override var y: Int) : Movable, Blockable {
     override var currentDirection: Direction = Direction.UP
 
     /**
+     * 坦克不可以移动的方向
+     */
+    private var badDirection: Direction? = null
+
+    /**
      * 根据方向绘制坦克
      */
     override fun draw() {
@@ -45,12 +50,16 @@ class Tank(override var x: Int, override var y: Int) : Movable, Blockable {
     }
 
     fun move(direction: Direction) {
+        if (direction == badDirection) {
+            return
+        }
+
         if (currentDirection != direction) {
             currentDirection = direction
             return
         }
 
-        when (direction) {
+        when (currentDirection) {
             Direction.UP -> y -= speed
             Direction.DOWN -> y += speed
             Direction.LEFT -> x -= speed
@@ -63,8 +72,60 @@ class Tank(override var x: Int, override var y: Int) : Movable, Blockable {
         if (y > Config.gameWidth - width) y = Config.gameWidth - height
     }
 
-    override fun willCollision(block: Blockable): Direction? {
-        return null;
+    override fun willCollision(block: Blockable?): Direction? {
+
+        // 1. 计算出下一时刻移动物体的坐标
+        var x = this.x
+        var y = this.y
+
+        when (currentDirection) {
+            Direction.UP -> y -= speed
+            Direction.DOWN -> y += speed
+            Direction.LEFT -> x -= speed
+            Direction.RIGHT -> x += speed
+        }
+
+        val collision = checkCollision(block?.x!!, block.y, block.width, block.height, x, y, width, height);
+
+        return if (collision) currentDirection else null
+
+    }
+
+    override fun notifyCollision(direction: Direction?, block: Blockable?) {
+        this.badDirection = direction
+    }
+
+    fun shot(): Bullet {
+        return Bullet(currentDirection, { bulletWidth, bulletHeight ->
+            // 计算子弹的真实坐标
+            var tankX = x
+            var tankY = y
+            var tankHeight = height
+            var tankWidth = width
+            var bulletX = 0
+            var bulletY = 0
+
+            when (currentDirection) {
+                Direction.UP -> {
+                    bulletX = tankX + (tankWidth - bulletWidth) / 2
+                    bulletY = tankY - bulletHeight / 2
+                }
+                Direction.DOWN -> {
+                    bulletX = tankX + (tankWidth - bulletWidth) / 2
+                    bulletY = tankY + tankHeight - bulletHeight / 2
+                }
+                Direction.LEFT -> {
+                    bulletX = tankX - bulletWidth / 2
+                    bulletY = tankY + (tankHeight - bulletHeight) / 2
+                }
+                Direction.RIGHT -> {
+                    bulletX = tankX + tankWidth - bulletWidth / 2
+                    bulletY = tankY + (tankHeight - bulletHeight) / 2
+                }
+            }
+
+            Pair(bulletX, bulletY)
+        })
     }
 
 }
