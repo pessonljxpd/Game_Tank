@@ -9,4 +9,9 @@ import org.itheima.game.model.View
  * @date 2017/11/30
  */
 interface Sufferable:View {
+
+    /**
+     * 通知被攻击者遭受了攻击者的攻击
+     */
+    fun notifySuffer(attackable: Attackable)
 }

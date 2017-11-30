@@ -39,8 +39,5 @@ interface View {
                 false
             else -> blockX + blockWidth > viewX
         }
-
     }
-
-
 }

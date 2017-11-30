@@ -8,5 +8,15 @@ import org.itheima.game.model.View
  * @author Shelly
  * @date 2017/11/30
  */
-interface Attackable:View {
+interface Attackable : View {
+
+    /**
+     * 判断是否碰撞
+     */
+    fun isCollision(sufferable: Sufferable): Boolean
+
+    /**
+     * 通知攻击者攻击了被攻击者
+     */
+    fun notifyAttack(sufferable: Sufferable)
 }

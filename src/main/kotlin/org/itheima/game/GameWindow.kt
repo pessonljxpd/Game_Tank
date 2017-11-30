@@ -2,10 +2,7 @@ package org.itheima.game
 
 import javafx.scene.input.KeyCode
 import javafx.scene.input.KeyEvent
-import org.itheima.game.business.AutoMovable
-import org.itheima.game.business.Blockable
-import org.itheima.game.business.Destroyable
-import org.itheima.game.business.Movable
+import org.itheima.game.business.*
 import org.itheima.game.enums.Direction
 import org.itheima.game.model.*
 import org.itheima.kotlin.game.core.Window
@@ -117,10 +114,29 @@ class GameWindow : Window("GameTank V1.0", "img/logo.jpg", Config.gameWidth, Con
 
         // 检测销毁
         views.filter { it is Destroyable }.forEach {
-            if((it as Destroyable).isDestroyed()){
+            if ((it as Destroyable).isDestroyed()) {
                 views.remove(it)
             }
         }
+
+        views.filter { it is Attackable }.forEach { attack ->
+
+            attack as Attackable
+
+            views.filter { it is Sufferable }.forEach sufferTag@ { suffer ->
+
+                suffer as Sufferable
+
+                if (attack.isCollision(suffer)){
+                    // 检测到产生碰撞后，通知攻击者、被攻击者
+                    attack.notifyAttack(suffer)
+                    suffer.notifySuffer(attack)
+
+                    return@sufferTag
+                }
+            }
+        }
+
 
     }
 
