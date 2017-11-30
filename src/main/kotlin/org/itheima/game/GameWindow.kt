@@ -130,7 +130,12 @@ class GameWindow : Window("GameTank V1.0", "img/logo.jpg", Config.gameWidth, Con
                 if (attack.isCollision(suffer)){
                     // 检测到产生碰撞后，通知攻击者、被攻击者
                     attack.notifyAttack(suffer)
-                    suffer.notifySuffer(attack)
+                    var sufferView = suffer.notifySuffer(attack)
+
+                    sufferView?.let {
+                        // 显示挨打的效果
+                        views.addAll(sufferView)
+                    }
 
                     return@sufferTag
                 }

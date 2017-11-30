@@ -18,5 +18,5 @@ interface Sufferable:View {
     /**
      * 通知被攻击者遭受了攻击者的攻击
      */
-    fun notifySuffer(attackable: Attackable)
+    fun notifySuffer(attackable: Attackable):Array<View>
 }
