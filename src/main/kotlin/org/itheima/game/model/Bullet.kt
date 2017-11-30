@@ -2,6 +2,7 @@ package org.itheima.game.model
 
 import org.itheima.game.Config
 import org.itheima.game.business.AutoMovable
+import org.itheima.game.business.Destroyable
 import org.itheima.game.enums.Direction
 import org.itheima.kotlin.game.core.Painter
 
@@ -11,7 +12,8 @@ import org.itheima.kotlin.game.core.Painter
  * @author Shelly
  * @date 2017/11/30
  */
-class Bullet(override val currentDirection: Direction, create: (width: Int, height: Int) -> Pair<Int, Int>) : AutoMovable {
+class Bullet(override val currentDirection: Direction, create: (width: Int, height: Int) -> Pair<Int, Int>)
+    : AutoMovable, Destroyable {
 
     override val speed: Int = 8
 
@@ -50,5 +52,16 @@ class Bullet(override val currentDirection: Direction, create: (width: Int, heig
             Direction.LEFT -> x -= speed
             Direction.RIGHT -> x += speed
         }
+    }
+
+    override fun isDestroyed(): Boolean {
+        var isDestroyed = when {
+            x < -width -> true
+            x > Config.gameWidth -> true
+            y < -height -> true
+            y > Config.gameHeight -> true
+            else -> false
+        }
+        return isDestroyed
     }
 }

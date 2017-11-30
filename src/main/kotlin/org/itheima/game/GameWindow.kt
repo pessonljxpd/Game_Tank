@@ -4,6 +4,7 @@ import javafx.scene.input.KeyCode
 import javafx.scene.input.KeyEvent
 import org.itheima.game.business.AutoMovable
 import org.itheima.game.business.Blockable
+import org.itheima.game.business.Destroyable
 import org.itheima.game.business.Movable
 import org.itheima.game.enums.Direction
 import org.itheima.game.model.*
@@ -110,9 +111,15 @@ class GameWindow : Window("GameTank V1.0", "img/logo.jpg", Config.gameWidth, Con
 
 
         // 找出所有自动移动的物体，触发autoMove动作
-
         views.filter { it -> it is AutoMovable }.forEach {
             (it as AutoMovable).autoMove()
+        }
+
+        // 检测销毁
+        views.filter { it is Destroyable }.forEach {
+            if((it as Destroyable).isDestroyed()){
+                views.remove(it)
+            }
         }
 
     }

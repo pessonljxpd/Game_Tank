@@ -5,7 +5,7 @@ import org.itheima.game.model.View
 
 
 /**
- * TODO: description
+ * 自动移动的能力
  *
  * @author Shelly
  * @date 2017/11/30
