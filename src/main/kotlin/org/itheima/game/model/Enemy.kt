@@ -13,12 +13,12 @@ import java.util.*
  * @date 2017/11/30
  */
 class Enemy(override var x: Int, override var y: Int)
-    : Movable, AutoMovable, Blockable, AutoShot {
+    : Movable, AutoMovable, Blockable, AutoShot, Sufferable, Destroyable {
 
-//    override var blood: Int = 2
+    override var blood: Int = 2
     override val width: Int = Config.block
     override val height: Int = Config.block
-    override val speed: Int = 6
+    override val speed: Int = 8
 
     override var currentDirection: Direction = Direction.DOWN
     /**
@@ -46,7 +46,7 @@ class Enemy(override var x: Int, override var y: Int)
         badDirection = direction
     }
 
-//    override fun isDestroyed(): Boolean = blood <= 0
+    override fun isDestroyed(): Boolean = blood <= 0
 
     override fun autoMove() {
         var currentMoveTime = System.currentTimeMillis()
@@ -82,9 +82,8 @@ class Enemy(override var x: Int, override var y: Int)
         }
         if (direction == badDirection) {
             return randomDirection(badDirection)
-        } else {
-            return direction
         }
+        return direction
     }
 
     override fun autoShot(): View? {
@@ -125,12 +124,11 @@ class Enemy(override var x: Int, override var y: Int)
         })
     }
 
-//    override fun notifySuffer(attackable: Attackable): Array<View>? {
-//        if (attackable.owner is Enemy) {
-//            return null
-//        }
-//
-//        blood -= attackable.attackPower
-//        return arrayOf(Blast(x, y))
-//    }
+    override fun notifySuffer(attackable: Attackable): Array<View>? {
+        if (attackable.owner is Enemy) {
+            return null
+        }
+        blood -= attackable.attackPower
+        return arrayOf(Blast(x, y))
+    }
 }

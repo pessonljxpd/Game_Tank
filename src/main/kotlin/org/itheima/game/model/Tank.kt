@@ -1,8 +1,7 @@
 package org.itheima.game.model
 
 import org.itheima.game.Config
-import org.itheima.game.business.Blockable
-import org.itheima.game.business.Movable
+import org.itheima.game.business.*
 import org.itheima.game.enums.Direction
 import org.itheima.kotlin.game.core.Painter
 
@@ -13,7 +12,13 @@ import org.itheima.kotlin.game.core.Painter
  * @author Shelly
  * @date 2017/11/29
  */
-class Tank(override var x: Int, override var y: Int) : Movable, Blockable {
+class Tank(override var x: Int, override var y: Int)
+    : Movable, Blockable, Sufferable, Destroyable {
+
+    /**
+     * 血量
+     */
+    override var blood: Int = 10
 
     /**
      * 坦克移动的速度
@@ -109,4 +114,13 @@ class Tank(override var x: Int, override var y: Int) : Movable, Blockable {
         })
     }
 
+    override fun isDestroyed(): Boolean = blood <= 0
+
+    override fun notifySuffer(attackable: Attackable): Array<View>? {
+        if (attackable.owner is Tank) {
+            return null
+        }
+        blood -= attackable.attackPower
+        return arrayOf(Blast(x, y))
+    }
 }

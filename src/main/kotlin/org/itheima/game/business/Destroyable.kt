@@ -8,12 +8,18 @@ import org.itheima.game.model.View
  * @author Shelly
  * @date 2017/11/30
  */
-interface Destroyable:View {
+interface Destroyable : View {
 
     /**
      * 判断是否销毁了
      */
-    fun isDestroyed():Boolean
-    
+    fun isDestroyed(): Boolean
 
+
+    /**
+     * 死给你看
+     */
+    fun showDestroy(): Array<View>? {
+        return null
+    }
 }

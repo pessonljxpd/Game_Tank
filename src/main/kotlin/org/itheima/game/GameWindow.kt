@@ -59,6 +59,7 @@ class GameWindow : Window("GameTank V1.0", "img/logo.jpg", Config.gameWidth, Con
         tank = Tank(Config.block * 10, Config.block * 12)
         views.add(tank)
 
+        views.add(Camp(Config.gameWidth / 2 - Config.block, Config.gameHeight - 96))
     }
 
     override fun onDisplay() {
@@ -80,6 +81,19 @@ class GameWindow : Window("GameTank V1.0", "img/logo.jpg", Config.gameWidth, Con
     }
 
     override fun onRefresh() {
+
+        // 检测销毁
+        views.filter { it is Destroyable }.forEach {
+            if ((it as Destroyable).isDestroyed()) {
+                views.remove(it)
+            }
+
+            val showDestroy = it.showDestroy()
+            showDestroy?.let {
+                views.addAll(showDestroy)
+            }
+
+        }
 
         // 1. 找到运动的物体
         views.filter { it -> it is Movable }.forEach { move ->
@@ -115,18 +129,10 @@ class GameWindow : Window("GameTank V1.0", "img/logo.jpg", Config.gameWidth, Con
             (it as AutoMovable).autoMove()
         }
 
-        // 检测销毁
-        views.filter { it is Destroyable }.forEach {
-            if ((it as Destroyable).isDestroyed()) {
-                views.remove(it)
-            }
-        }
-
         views.filter { it is Attackable }.forEach { attack ->
-
             attack as Attackable
 
-            views.filter { it is Sufferable }.forEach sufferTag@ { suffer ->
+            views.filter { (it is Sufferable) and (attack.owner != it) and (attack != it) }.forEach sufferTag@ { suffer ->
 
                 suffer as Sufferable
 
